@@ -1,4 +1,4 @@
-﻿// auth.js - Enforces RBAC on the frontend and handles Profile Dropdown
+// auth.js - Enforces RBAC on the frontend and handles Profile Dropdown
 
 localStorage.removeItem('lang'); // Clean up unused language preference
 
@@ -72,7 +72,7 @@ console.log("Logged in as role:", role);
 function injectSidebarProfile() {
     if(window.location.pathname.includes('index.html') || window.location.pathname === '/') return;
 
-    const API_BASE = 'http://localhost:8000';
+    const API_BASE = '';
     
     fetch(`${API_BASE}/users/me`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }

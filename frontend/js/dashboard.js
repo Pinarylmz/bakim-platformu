@@ -5,7 +5,7 @@ if (!token) {
 }
 
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = '';
 let currentUAVs = [];
 let currentParts = [];
 let telemetryInterval = null;

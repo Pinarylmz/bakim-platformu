@@ -39,7 +39,7 @@ async function processSyncQueue() {
                 bodyData = JSON.stringify(bodyData);
             }
 
-            const response = await fetch(`http://localhost:8000${item.endpoint}`, {
+            const response = await fetch(`${item.endpoint}`, {
                 method: item.method,
                 headers: headers,
                 body: bodyData

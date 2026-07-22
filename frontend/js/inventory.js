@@ -3,7 +3,7 @@ const token = localStorage.getItem('token');
 if (!token) { window.location.href = 'index.html'; }
 
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = '';
 let currentInventory = [];
 
 // Translation Map for English localization without breaking backend db

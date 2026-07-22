@@ -44,3 +44,6 @@ app.include_router(users.router)
 app.include_router(telemetry.router)
 
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+frontend_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend")
+app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")

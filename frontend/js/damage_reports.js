@@ -2,7 +2,7 @@ const token = localStorage.getItem('token');
 if (!token) { window.location.href = 'index.html'; }
 
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = '';
 let html5QrcodeScanner = null;
 let currentUAVs = []; // Store fetched UAVs
 
