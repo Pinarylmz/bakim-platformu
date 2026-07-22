@@ -1,0 +1,176 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Damage Reports - UAV BakÄ±mda</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <style>
+        .qr-reader-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto 20px;
+            background: #1a1a1a;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            text-align: center;
+        }
+        #qr-reader {
+            width: 100%;
+            color: #fff;
+            padding-top: 10px;
+        }
+        #qr-reader button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        #qr-reader select {
+            background: var(--input-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 5px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        #qr-reader a {
+            color: var(--primary-color);
+        }
+        .img-link {
+            display: inline-block;
+            background: rgba(0, 168, 255, 0.1);
+            color: var(--primary-color);
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .img-link:hover {
+            background: rgba(0, 168, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+        <nav class="sidebar" id="sidebar">
+        <div class="logo-area-small">
+            <div class="logo-icon-small"></div>
+            <h2>UAV Bakımda</h2>
+        </div>
+        <ul class="nav-links">
+            <li class=""><a href="dashboard.html">Dashboard</a></li>
+            <li class=""><a href="inventory.html">Inventory</a></li>
+            <li class="active"><a href="damage_reports.html">Damage Reports</a></li>
+            <li class=""><a href="personnel.html" class="admin-only" style="display:none;">Personnel Tracking</a></li>
+            
+            <li><a href="#" id="logoutBtn">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div>
+                <h1>Damage Reports</h1>
+                <p>Scan QR and submit a new hardware damage report.</p>
+            </div>
+            <button id="openReportModalBtn" class="btn-primary" style="width: auto; margin:0; background-color: var(--error-color);">+ Report Damage</button>
+        </header>
+
+        <section class="inventory-section">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Part Name</th>
+                        <th>SN</th>
+                        <th>Description</th>
+                        <th>Image</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="reportsBody">
+                    <!-- Reports injected here -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Report Damage Modal -->
+        <div class="parts-panel-overlay" id="reportDamageModal">
+            <div class="parts-panel-content" style="width: 500px; margin: 5vh auto; height: auto; border-radius: 12px; position: relative; border: 1px solid var(--border-color); max-height: 90vh; overflow-y: auto;">
+                <div class="panel-header">
+                    <h2 style="font-size: 20px; color: var(--error-color);">Report Damage</h2>
+                    <button id="closeReportModalBtn" class="close-btn">&times;</button>
+                </div>
+                <div class="panel-body">
+                    
+                    <button type="button" id="toggleQrScannerBtn" class="btn-secondary" style="width: 100%; margin-bottom: 15px; display: flex; justify-content: center; align-items: center; gap: 8px;">
+                        <i class="fas fa-qrcode"></i> Scan QR Code (Optional)
+                    </button>
+                    
+                    <div class="qr-reader-container" id="qrScannerContainer" style="display: none; margin-bottom: 20px;">
+                        <div id="qr-reader"></div>
+                    </div>
+
+                    <form id="damageReportForm">
+                        <div class="input-group">
+                            <label>UAV Selection</label>
+                            <select id="uavSerial" required style="width: 100%; padding: 14px 16px; background-color: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);">
+                                <option value="" disabled selected>Select UAV...</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Damaged Part</label>
+                            <select id="inventorySelect" required style="width: 100%; padding: 14px 16px; background-color: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);">
+                                <option value="" disabled selected>Select UAV first to load parts...</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Description</label>
+                            <textarea id="damageDescription" placeholder="Describe the physical or software issue..." required style="width: 100%; padding: 14px 16px; background-color: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); resize: vertical; min-height: 80px;"></textarea>
+                        </div>
+                        <div class="input-group">
+                            <label>Urgency / Status Effect</label>
+                            <select id="urgencyLevel" required style="width: 100%; padding: 14px 16px; background-color: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);">
+                                <option value="LOW">Low (Status: OK)</option>
+                                <option value="MODERATE">Moderate (Status: WARNING)</option>
+                                <option value="Critical" style="color: var(--error-color); font-weight:bold;">Critical (Status: CRITICAL)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Upload Damage Photo</label>
+                            <input type="file" id="damageImage" accept="image/*" style="width: 100%; padding: 10px; background-color: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary);">
+                        </div>
+                        
+                        <p id="formError" class="error-message"></p>
+                        <button type="submit" class="btn-primary" style="background-color: var(--error-color);">Submit Report</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    
+
+</main>
+
+        <script src="js/damage_reports.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/sync.js"></script>
+
+
+    
+    </div>
+    
+</div>
+
+</body>
+</html>
+
+

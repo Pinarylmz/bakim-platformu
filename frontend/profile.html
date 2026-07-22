@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - UAV BakÄ±mda</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <style>
+        .profile-container { display: grid; grid-template-columns: 1fr 2fr; gap: 40px; margin-top: 20px; }
+        .profile-left, .profile-right { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 30px; }
+        .profile-title { font-size: 28px; font-weight: 800; margin-bottom: 5px; }
+        .profile-role { color: var(--primary-color); font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px; display: inline-block; padding: 4px 10px; background: rgba(0, 168, 255, 0.1); border-radius: 20px; }
+    </style>
+</head>
+<body class="dashboard-body">
+        <nav class="sidebar" id="sidebar">
+        <div class="logo-area-small">
+            <div class="logo-icon-small"></div>
+            <h2>UAV Bakımda</h2>
+        </div>
+        <ul class="nav-links">
+            <li class=""><a href="dashboard.html">Dashboard</a></li>
+            <li class=""><a href="inventory.html">Inventory</a></li>
+            <li class=""><a href="damage_reports.html">Damage Reports</a></li>
+            <li class=""><a href="personnel.html" class="admin-only" style="display:none;">Personnel Tracking</a></li>
+            
+            <li><a href="#" id="logoutBtn">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <div class="profile-container">
+            <!-- Left Column: User Info & Settings -->
+            <div class="profile-left">
+                <h1 class="profile-title" id="profFullName">Loading...</h1>
+                <span class="profile-role" id="profRole"></span>
+
+                <h3 style="margin-top: 20px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Edit Profile</h3>
+                <form id="editProfileForm">
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <input type="text" id="editFullName" required style="width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border-color); color: white; border-radius: 8px;">
+                    </div>
+                    <button type="submit" class="btn-primary" style="margin-bottom: 20px;">Save Name</button>
+                </form>
+
+                <form id="changePasswordForm">
+                    <div class="input-group">
+                        <label>New Password</label>
+                        <input type="password" id="newPassword" required style="width: 100%; padding: 12px; background: var(--input-bg); border: 1px solid var(--border-color); color: white; border-radius: 8px;">
+                    </div>
+                    <button type="submit" class="btn-secondary" style="width: 100%;">Change Password</button>
+                </form>
+                
+                <p id="profileMsg" style="margin-top: 15px; font-size: 13px;"></p>
+
+                <!-- Admin Approval Section (Hidden by Default) -->
+                <div id="adminApprovalSection" class="admin-only" style="display: none; margin-top: 40px;">
+                    <hr style="border-color: var(--border-color); margin-bottom: 20px;">
+                    <h3 style="color: var(--warning-color); margin-bottom: 15px;">Pending Approvals</h3>
+                    <div id="pendingUsersList" style="display: flex; flex-direction: column; gap: 15px;">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: BakÄ±mda History / Logs -->
+            <div class="profile-right">
+                <h3 style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px;">My Activity & Logs</h3>
+                <div id="activityLogs" style="display: flex; flex-direction: column; gap: 15px;">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+        </div>
+    
+
+</main>
+
+        <script src="js/profile.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/sync.js"></script>
+
+
+    
+    </div>
+    
+</div>
+
+</body>
+</html>
+

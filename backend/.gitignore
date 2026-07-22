@@ -1,0 +1,6 @@
+__pycache__/
+venv/
+.env
+maintenance_temp.db
+eski_maintenance.db
+*.py

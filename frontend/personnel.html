@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personnel Tracking - UAV BakÄ±mda</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+        <nav class="sidebar" id="sidebar">
+        <div class="logo-area-small">
+            <div class="logo-icon-small"></div>
+            <h2>UAV Bakımda</h2>
+        </div>
+        <ul class="nav-links">
+            <li class=""><a href="dashboard.html">Dashboard</a></li>
+            <li class=""><a href="inventory.html">Inventory</a></li>
+            <li class=""><a href="damage_reports.html">Damage Reports</a></li>
+            <li class="active"><a href="personnel.html" class="admin-only" style="display:none;">Personnel Tracking</a></li>
+            
+            <li><a href="#" id="logoutBtn">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div>
+                <h1>Personnel Tracking</h1>
+                <p>Monitor user registration dates and time spent in the system.</p>
+            </div>
+        </header>
+
+        <section class="inventory-section">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Position</th>
+                        <th>Registration Date</th>
+                        <th>Time in System</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="trackingBody">
+                    <tr><td colspan="4" style="text-align: center; color: var(--text-secondary);">Loading...</td></tr>
+                </tbody>
+            </table>
+        </section>
+    
+
+</main>
+
+        <script src="js/auth.js"></script>
+    <script src="js/sync.js"></script>
+    <script src="js/personnel.js"></script>
+
+
+    
+    </div>
+    
+</div>
+
+</body>
+</html>
+

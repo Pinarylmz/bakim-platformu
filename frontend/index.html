@@ -1,0 +1,166 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - UAV BakÄ±mda</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <style>
+        .tabs { display: flex; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); }
+        .tab-btn { flex: 1; padding: 15px; background: none; border: none; color: var(--text-secondary); cursor: pointer; font-weight: 600; font-size: 14px; transition: var(--transition); }
+        .tab-btn.active { color: var(--accent-red); border-bottom: 2px solid var(--accent-red); }
+        .form-section { display: none; }
+        .form-section.active { display: block; }
+        #registerSuccess { background: rgba(0, 204, 102, 0.1); padding: 12px; border-radius: 8px; border: 1px solid var(--success-color); }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="logo-area">
+                <div class="logo-icon"></div>
+                <h1>UAV BakÄ±mda</h1>
+                <p>Advanced Fleet Management System</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('login')">Sign In</button>
+                <button class="tab-btn" onclick="switchTab('register')">Sign Up</button>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm" class="form-section active">
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" id="username" required placeholder="Enter your username">
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="password" required placeholder="Enter your password">
+                </div>
+                <p id="loginError" class="error-message"></p>
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+
+            <!-- REGISTER FORM -->
+            <form id="registerForm" class="form-section">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="regFullName" required placeholder="John Doe">
+                </div>
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" id="regUsername" required placeholder="Choose a username">
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="regPassword" required placeholder="Create a password">
+                </div>
+                <p id="registerError" class="error-message"></p>
+                <p id="registerSuccess" style="color: var(--success-color); font-size: 13px; text-align: center; display: none; margin-bottom: 15px;">Registration successful! Awaiting admin approval.</p>
+                <button type="submit" class="btn-primary" style="background-color: var(--bg-lighter); color: var(--text-primary); border: 1px solid var(--border-color);">Create Account</button>
+            </form>
+        </div>
+
+        <div class="lang-switch">
+            <button id="langEN" class="active">EN</button>
+            <button id="langTR">TR</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.form-section').forEach(f => f.classList.remove('active'));
+            
+            if (tab === 'login') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
+
+        // Login Logic
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            const err = document.getElementById('loginError');
+            err.textContent = '';
+            
+            const formData = new URLSearchParams();
+            formData.append('username', u);
+            formData.append('password', p);
+            
+            try {
+                const res = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData
+                });
+                
+                const data = await res.json();
+                
+                if (res.ok) {
+                    localStorage.setItem('token', data.access_token);
+                    // Decode token to get role: token-{user_id}-{role}
+                    const parts = data.access_token.split('-');
+                    if (parts.length === 3) {
+                        localStorage.setItem('role', parts[2]);
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        err.textContent = 'Invalid token format from server.';
+                    }
+                } else {
+                    err.textContent = data.detail || 'Login failed.';
+                }
+            } catch (error) {
+                err.textContent = 'Network error. Backend might be down.';
+            }
+        });
+
+        // Register Logic
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const full_name = document.getElementById('regFullName').value;
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+            const err = document.getElementById('registerError');
+            const success = document.getElementById('registerSuccess');
+            const btn = e.target.querySelector('button[type="submit"]');
+            
+            err.textContent = '';
+            success.style.display = 'none';
+            btn.disabled = true;
+            
+            try {
+                const res = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ full_name, username, password })
+                });
+                
+                if (res.ok) {
+                    success.style.display = 'block';
+                    e.target.reset();
+                } else {
+                    const data = await res.json();
+                    err.textContent = data.detail || 'Registration failed.';
+                }
+            } catch (error) {
+                err.textContent = 'Network error. Backend might be down.';
+            } finally {
+                btn.disabled = false;
+            }
+        });
+    </script>
+        <script src="js/auth.js"></script>
+</body>
+</html>
+

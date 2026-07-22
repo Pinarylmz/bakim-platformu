@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - UAV Bakımda</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+        <nav class="sidebar" id="sidebar">
+        <div class="logo-area-small">
+            <div class="logo-icon-small"></div>
+            <h2>UAV Bakımda</h2>
+        </div>
+        <ul class="nav-links">
+            <li class="active"><a href="dashboard.html">Dashboard</a></li>
+            <li class=""><a href="inventory.html">Inventory</a></li>
+            <li class=""><a href="damage_reports.html">Damage Reports</a></li>
+            <li class=""><a href="personnel.html" class="admin-only" style="display:none;">Personnel Tracking</a></li>
+            
+            <li><a href="#" id="logoutBtn">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div>
+                <h1>Fleet Overview</h1>
+                <p>Select a UAV to inspect its hardware components.</p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button id="openAddUavModalBtn" class="btn-primary" style="margin: 0;">+ Add New UAV</button>
+                <button id="seedBtn" class="btn-secondary" style="margin: 0;">Seed Test Data</button>
+            </div>
+        </header>
+
+        <section class="uav-grid" id="uavGrid">
+            <!-- UAV Cards will be injected here via JS -->
+        </section>
+
+        <!-- Parts Panel Overlay -->
+        <div class="parts-panel-overlay" id="partsPanel">
+            <div class="parts-panel-content">
+                <div class="panel-header">
+                    <h2 id="panelUavName">Hardware Details</h2>
+                    <div style="display:flex; align-items:center; gap: 15px;">
+                        <button id="viewInInventoryBtn" class="btn-secondary" style="margin:0; font-size:12px; padding:6px 12px;">View in Inventory</button>
+                        <button class="close-btn" id="closePanelBtn">&times;</button>
+                    </div>
+                </div>
+                
+                <div style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px; background:var(--bg-color); border-bottom:1px solid var(--border-color);">
+                    <div>
+                        <h4 style="margin:0; color:var(--text-secondary); font-size:12px; text-transform:uppercase;">Serial No</h4>
+                        <span id="panelUavSerial" style="font-weight:bold; color:white;">--</span>
+                    </div>
+                    <div>
+                        <h4 style="margin:0; color:var(--text-secondary); font-size:12px; text-transform:uppercase;">Status</h4>
+                        <span id="panelUavStatus" style="font-weight:bold; color:white;">--</span>
+                    </div>
+                    <div>
+                        <h4 style="margin:0; color:var(--text-secondary); font-size:12px; text-transform:uppercase;">Total Hours</h4>
+                        <span id="panelUavHours" style="font-weight:bold; color:white;">--</span>
+                    </div>
+                </div>
+
+                <!-- Telemetry Stats Row -->
+                <div style="display:flex; gap: 15px; padding: 15px 20px; border-bottom: 1px solid var(--border-color); background: rgba(0,0,0,0.2);">
+                    <div style="flex:1; text-align:center;">
+                        <span style="font-size:11px; color:var(--text-secondary); display:block; margin-bottom:5px;">BATTERY</span>
+                        <strong id="liveBattery" style="color:var(--success-color); font-size:16px;">--</strong>
+                    </div>
+                    <div style="flex:1; text-align:center;">
+                        <span style="font-size:11px; color:var(--text-secondary); display:block; margin-bottom:5px;">ESC TEMP</span>
+                        <strong id="liveTemp" style="color:var(--warning-color); font-size:16px;">--</strong>
+                    </div>
+                    <div style="flex:1; text-align:center;">
+                        <span style="font-size:11px; color:var(--text-secondary); display:block; margin-bottom:5px;">VIB LEVEL</span>
+                        <strong id="liveVib" style="color:var(--error-color); font-size:16px;">--</strong>
+                    </div>
+                    <div style="flex:1; text-align:center;">
+                        <span style="font-size:11px; color:var(--text-secondary); display:block; margin-bottom:5px;">RPM ASYM</span>
+                        <strong id="liveRpm" style="color:var(--primary-color); font-size:16px;">--</strong>
+                    </div>
+                    <div style="display:flex; align-items:center;">
+                        <button id="toggleSimulationBtn" class="btn-primary" style="margin:0; font-size:12px; padding:8px 12px;">Start Simulation</button>
+                    </div>
+                </div>
+
+
+                <div class="panel-body">
+                    <div class="filters">
+                        <button class="filter-btn active" data-filter="All">All Parts</button>
+                        <button class="filter-btn" data-filter="Critical">Critical</button>
+                        <button class="filter-btn" data-filter="Warning">Warnings</button>
+                    </div>
+
+                    <div class="parts-list" id="partsList">
+                        <!-- Parts injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add UAV Modal -->
+        
+        <!-- Add New UAV Modal -->
+        <div class="parts-panel-overlay" id="addUavModal">
+            <div class="parts-panel-content" style="max-width: 500px; height: auto; border-radius: 12px; margin: 15vh auto;">
+                <div class="panel-header">
+                    <h3>Add New UAV</h3>
+                    <button class="close-btn" id="closeAddUavModalBtn">&times;</button>
+                </div>
+                
+                <div class="panel-body" style="padding: 20px;">
+                    <form id="addUavForm" style="display: flex; flex-direction: column; gap: 15px;">
+                        <p id="addUavError" style="color: var(--error-color); margin: 0; font-size: 13px;"></p>
+                        <div>
+                            <label style="display:block; margin-bottom: 5px;">Serial Number / QR Code <span style="color:var(--error-color);">*</span></label>
+                            <input type="text" id="newUavSerial" required placeholder="e.g. QR-HELI-002" style="width: 100%; padding: 10px; background: var(--input-bg); border: 1px solid var(--border-color); color: white; border-radius: 6px;">
+                            <div id="qr-reader-uav" style="width:100%; margin-top: 10px;"></div>
+                        </div>
+                        <div>
+                            <label style="display:block; margin-bottom: 5px;">Model Name <span style="color:var(--error-color);">*</span></label>
+                            <input type="text" id="newUavModel" required placeholder="e.g. Beta-Y" style="width: 100%; padding: 10px; background: var(--input-bg); border: 1px solid var(--border-color); color: white; border-radius: 6px;">
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Create UAV</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        
+    
+        </div>
+    </div>
+
+    </main>
+
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/sync.js"></script>
+</body>
+</html>
